@@ -50,9 +50,7 @@
             <div class="col-lg-8 mx-auto text-center mb-5">
                 <h2 class="display-5 fw-bold mb-4">About Me</h2>
                 <p class="lead text-muted">
-                    I'm a full-stack developer specializing in Django, React, and Data Analytics. 
-                    I don't just write code—I solve problems, deliver value, and build relationships 
-                    with clients who trust me to bring their vision to life.
+                    <span id="typing-text" class="typing-text"></span><span class="typing-cursor">|</span>
                 </p>
             </div>
         </div>
@@ -401,5 +399,55 @@
         </div>
     </div>
 </section>
+
+{% block extra_css %}
+<style>
+    .typing-text {
+        min-height: 1.5em;
+        display: inline-block;
+    }
+    
+    .typing-cursor {
+        display: inline-block;
+        animation: blink 1s infinite;
+        color: #667eea;
+        font-weight: bold;
+        margin-left: 2px;
+    }
+    
+    @keyframes blink {
+        0%, 50% {
+            opacity: 1;
+        }
+        51%, 100% {
+            opacity: 0;
+        }
+    }
+</style>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const typingElement = document.getElementById('typing-text');
+        const text = "5 years Experience Fullstack Developer, experienced under different domains (health, stocks, etc.). I'm a full-stack developer specializing in Django, React, and Data Analytics. I don't just write code—I solve problems, deliver value, and build relationships with clients who trust me to bring their vision to life.";
+        
+        let index = 0;
+        const typingSpeed = 50; // milliseconds per character
+        
+        function typeText() {
+            if (index < text.length) {
+                typingElement.textContent += text.charAt(index);
+                index++;
+                setTimeout(typeText, typingSpeed);
+            }
+        }
+        
+        // Start typing after a short delay
+        setTimeout(typeText, 500);
+    });
+</script>
+{% endblock %}
+
+{% endblock content %}
 
