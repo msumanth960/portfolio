@@ -26,9 +26,10 @@ Make sure your code is pushed to: https://github.com/msumanth960/portfolio
    - **Branch**: `main`
    - **Root Directory**: Leave empty (or `./` if needed)
    - **Runtime**: `Python 3`
+   - **Python Version**: `3.11.0` (IMPORTANT: Set this in Environment Variables or use runtime.txt)
    - **Build Command**: 
      ```bash
-     pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+     pip install --upgrade pip setuptools wheel && pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
      ```
    - **Start Command**: 
      ```bash
