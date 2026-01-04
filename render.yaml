@@ -16,5 +16,11 @@ services:
         value: False
       - key: ALLOWED_HOSTS
         value: portfolio-app.onrender.com
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
     healthCheckPath: /
 

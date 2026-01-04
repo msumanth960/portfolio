@@ -48,6 +48,9 @@ In the Render dashboard, go to your service → Environment → Add the followin
 - **DEBUG**: `False`
 - **ALLOWED_HOSTS**: `your-app-name.onrender.com` (Render will provide the URL)
 - **PYTHON_VERSION**: `3.11.0` (optional, but recommended)
+- **CLOUDINARY_CLOUD_NAME**: Your Cloudinary cloud name (from Cloudinary dashboard)
+- **CLOUDINARY_API_KEY**: Your Cloudinary API key (from Cloudinary dashboard)
+- **CLOUDINARY_API_SECRET**: Your Cloudinary API secret (from Cloudinary dashboard)
 
 ### 4. Deploy
 
