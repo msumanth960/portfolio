@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Contact - Portfolio{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold mb-3">Get In Touch</h1>
+                <p class="lead text-muted">
+                    Have a project in mind? Let's discuss how I can help bring your vision to life.
+                </p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h3 class="mb-4">Send a Message</h3>
+                            {% crispy form %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Contact Information</h5>
+                            
+                            <div class="mb-4">
+                                <i class="bi bi-briefcase text-primary fs-5 me-2"></i>
+                                <strong>Upwork Profile</strong>
+                                <p class="text-muted small mb-0">
+                                    <a href="https://www.upwork.com/freelancers/~YOUR_PROFILE_ID" target="_blank">
+                                        View Profile
+                                    </a>
+                                </p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <i class="bi bi-envelope text-primary fs-5 me-2"></i>
+                                <strong>Email</strong>
+                                <p class="text-muted small mb-0">
+                                    <a href="mailto:your.email@example.com">your.email@example.com</a>
+                                </p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <i class="bi bi-clock text-primary fs-5 me-2"></i>
+                                <strong>Response Time</strong>
+                                <p class="text-muted small mb-0">Usually within 24 hours</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <i class="bi bi-check-circle text-success fs-5 me-2"></i>
+                                <strong>Availability</strong>
+                                <p class="text-muted small mb-0">Available for new projects</p>
+                            </div>
+                            
+                            <hr>
+                            
+                            <h6 class="fw-bold mb-3">Quick Links</h6>
+                            <div class="d-flex flex-column gap-2">
+                                <a href="{% url 'home' %}#projects" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-folder2-open me-2"></i>View Projects
+                                </a>
+                                <a href="{% url 'home' %}#services" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-list-check me-2"></i>Services
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

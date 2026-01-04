@@ -1,0 +1,405 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section id="hero" class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <h1 class="display-3 fw-bold mb-4 animate-fade-in">
+                    Django & React Developer<br>
+                    <span class="text-primary">Analytics-Driven Web Solutions</span>
+                </h1>
+                <p class="lead mb-4 text-muted">
+                    I build scalable web applications that solve real business problems. 
+                    From backend APIs to interactive dashboards, I deliver clean code, 
+                    data-driven insights, and results that matter.
+                </p>
+                <div class="d-flex flex-wrap gap-3 mb-4">
+                    <a href="https://www.upwork.com/freelancers/~YOUR_PROFILE_ID" 
+                       class="btn btn-primary btn-lg" target="_blank">
+                        <i class="bi bi-briefcase me-2"></i>Hire Me on Upwork
+                    </a>
+                    <a href="#projects" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-folder2-open me-2"></i>View Projects
+                    </a>
+                </div>
+                <div class="d-flex flex-wrap gap-3">
+                    <span class="badge bg-light text-dark px-3 py-2">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>Available Now
+                    </span>
+                    <span class="badge bg-light text-dark px-3 py-2">
+                        <i class="bi bi-clock-fill text-primary me-2"></i>Quick Response
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-image-wrapper">
+                    <div class="gradient-orb"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Me Section -->
+<section id="about" class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center mb-5">
+                <h2 class="display-5 fw-bold mb-4">About Me</h2>
+                <p class="lead text-muted">
+                    I'm a full-stack developer specializing in Django, React, and Data Analytics. 
+                    I don't just write code—I solve problems, deliver value, and build relationships 
+                    with clients who trust me to bring their vision to life.
+                </p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-shield-check text-primary fs-1 mb-3"></i>
+                        <h5 class="fw-bold">Reliable & Professional</h5>
+                        <p class="text-muted mb-0">On-time delivery, clear communication, and commitment to quality.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-lightbulb text-primary fs-1 mb-3"></i>
+                        <h5 class="fw-bold">Problem Solver</h5>
+                        <p class="text-muted mb-0">I focus on understanding your business needs and delivering solutions that work.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-graph-up-arrow text-primary fs-1 mb-3"></i>
+                        <h5 class="fw-bold">Results-Driven</h5>
+                        <p class="text-muted mb-0">Every project is built with performance, scalability, and ROI in mind.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tech Stack Badges -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="text-center mb-4 fw-bold">Tech Stack</h3>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <span class="badge bg-primary px-4 py-2 fs-6">Django</span>
+                    <span class="badge bg-primary px-4 py-2 fs-6">React</span>
+                    <span class="badge bg-primary px-4 py-2 fs-6">Bootstrap 5</span>
+                    <span class="badge bg-primary px-4 py-2 fs-6">PostgreSQL</span>
+                    <span class="badge bg-primary px-4 py-2 fs-6">REST APIs</span>
+                    <span class="badge bg-primary px-4 py-2 fs-6">Data Analytics</span>
+                    <span class="badge bg-primary px-4 py-2 fs-6">Python</span>
+                    <span class="badge bg-primary px-4 py-2 fs-6">JavaScript</span>
+                    <span class="badge bg-primary px-4 py-2 fs-6">Chart.js</span>
+                    <span class="badge bg-primary px-4 py-2 fs-6">Docker</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Projects Showcase Section -->
+<section id="projects" class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold mb-3">Featured Projects</h2>
+                <p class="lead text-muted">
+                    Real projects solving real problems. Each one demonstrates expertise, 
+                    attention to detail, and a commitment to delivering value.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for project in featured_projects %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm project-card">
+                    <div class="card-body">
+                        <span class="badge bg-secondary mb-2">
+                            {% if project.category %}{{ project.category.name }}{% else %}Full-Stack{% endif %}
+                        </span>
+                        <h5 class="card-title fw-bold">{{ project.title }}</h5>
+                        <p class="card-text text-muted">{{ project.description|truncatewords:20 }}</p>
+                        <div class="mb-3">
+                            {% for tech in project.get_tech_list|slice:":3" %}
+                            <span class="badge bg-light text-dark me-1">{{ tech }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ project.get_absolute_url }}" class="btn btn-sm btn-primary">View Details</a>
+                            {% if project.live_demo_url %}
+                            <a href="{{ project.live_demo_url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="bi bi-box-arrow-up-right"></i> Demo
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">Projects will appear here once added through the admin panel.</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{% url 'projects_list' %}" class="btn btn-outline-primary btn-lg">
+                View All Projects <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Analytics & Reports Section -->
+<section id="analytics" class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold mb-3">Analytics & Reports</h2>
+                <p class="lead text-muted">
+                    Data-driven insights that drive decisions. See how analytics 
+                    transformed business performance, improved efficiency, and increased revenue.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for item in analytics %}
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    {% if item.image %}
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 250px; object-fit: cover;">
+                    {% else %}
+                    <div class="card-img-top bg-gradient-primary d-flex align-items-center justify-content-center" style="height: 250px;">
+                        <i class="bi bi-graph-up text-white fs-1"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">{{ item.title }}</h5>
+                        <p class="card-text text-muted">{{ item.description }}</p>
+                        <div class="mb-3">
+                            <strong class="text-primary">Key Insights:</strong>
+                            <p class="small mb-0">{{ item.insights|truncatewords:15 }}</p>
+                        </div>
+                        <div>
+                            <strong class="text-success">Impact:</strong>
+                            <p class="small mb-0">{{ item.impact }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">Analytics showcases will appear here once added through the admin panel.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold mb-3">Fields of Work</h2>
+                <p class="lead text-muted">Comprehensive web development and analytics services tailored to your needs.</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card p-4 h-100">
+                    <i class="bi bi-server text-primary fs-1 mb-3"></i>
+                    <h5 class="fw-bold">Django Web Applications</h5>
+                    <p class="text-muted">Scalable, secure backend systems built with Django. RESTful APIs, authentication, and database optimization.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card p-4 h-100">
+                    <i class="bi bi-code-square text-primary fs-1 mb-3"></i>
+                    <h5 class="fw-bold">React Frontend Development</h5>
+                    <p class="text-muted">Modern, interactive user interfaces with React. Component-based architecture and responsive design.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card p-4 h-100">
+                    <i class="bi bi-plug text-primary fs-1 mb-3"></i>
+                    <h5 class="fw-bold">REST API Development</h5>
+                    <p class="text-muted">Well-documented, secure APIs that integrate seamlessly with any frontend or mobile application.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card p-4 h-100">
+                    <i class="bi bi-graph-up-arrow text-primary fs-1 mb-3"></i>
+                    <h5 class="fw-bold">Data Analytics & Reporting</h5>
+                    <p class="text-muted">Transform raw data into actionable insights. Custom dashboards and automated reporting systems.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card p-4 h-100">
+                    <i class="bi bi-speedometer2 text-primary fs-1 mb-3"></i>
+                    <h5 class="fw-bold">Dashboard & Admin Panels</h5>
+                    <p class="text-muted">Intuitive admin interfaces for managing data, users, and business operations efficiently.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card p-4 h-100">
+                    <i class="bi bi-gear text-primary fs-1 mb-3"></i>
+                    <h5 class="fw-bold">Automation & Business Tools</h5>
+                    <p class="text-muted">Streamline workflows with custom automation tools that save time and reduce errors.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Hire Me Section -->
+<section id="why-hire" class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <h2 class="display-5 fw-bold text-center mb-5">Why Hire Me?</h2>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                            <div>
+                                <h5 class="fw-bold">Clean, Maintainable Code</h5>
+                                <p class="text-muted mb-0">Well-structured code that's easy to understand, maintain, and extend.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                            <div>
+                                <h5 class="fw-bold">Scalable Architecture</h5>
+                                <p class="text-muted mb-0">Built to grow with your business, handling increased load and complexity.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                            <div>
+                                <h5 class="fw-bold">On-Time Delivery</h5>
+                                <p class="text-muted mb-0">I respect deadlines and deliver quality work when promised.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                            <div>
+                                <h5 class="fw-bold">Clear Communication</h5>
+                                <p class="text-muted mb-0">Regular updates, transparent progress, and responsive to your questions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                            <div>
+                                <h5 class="fw-bold">Problem-Solving Focus</h5>
+                                <p class="text-muted mb-0">I understand your business goals and build solutions that deliver real value.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <i class="bi bi-check-circle-fill text-success fs-4 me-3"></i>
+                            <div>
+                                <h5 class="fw-bold">Data-Driven Decisions</h5>
+                                <p class="text-muted mb-0">Analytics and insights guide every decision, ensuring optimal outcomes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section id="testimonials" class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold mb-3">Client Testimonials</h2>
+                <p class="lead text-muted">Don't just take my word for it—hear from clients who've worked with me.</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for testimonial in testimonials %}
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= testimonial.rating %}
+                                <i class="bi bi-star-fill text-warning"></i>
+                                {% else %}
+                                <i class="bi bi-star text-muted"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p class="card-text fst-italic mb-4">"{{ testimonial.content }}"</p>
+                        <div>
+                            <strong>{{ testimonial.client_name }}</strong>
+                            {% if testimonial.client_title %}
+                            <br><small class="text-muted">{{ testimonial.client_title }}</small>
+                            {% endif %}
+                            {% if testimonial.company %}
+                            <br><small class="text-muted">{{ testimonial.company }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">Testimonials will appear here once added through the admin panel.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Contact CTA Section -->
+<section id="contact-cta" class="py-5 contact-cta-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="display-5 fw-bold mb-4">Ready to Start Your Project?</h2>
+                <p class="lead mb-4 text-muted">
+                    Let's discuss how I can help bring your vision to life. 
+                    I'm available for new projects and always respond quickly.
+                </p>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="{% url 'contact' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-envelope me-2"></i>Get In Touch
+                    </a>
+                    <a href="https://www.upwork.com/freelancers/~YOUR_PROFILE_ID" 
+                       class="btn btn-outline-primary btn-lg" target="_blank">
+                        <i class="bi bi-briefcase me-2"></i>Hire on Upwork
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

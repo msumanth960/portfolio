@@ -1,0 +1,768 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }} - Portfolio{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Modern Project Detail Styles */
+    .project-hero {
+        background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f0ff 100%);
+        color: #212529;
+        padding: 3rem 0 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .project-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(102,126,234,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+        opacity: 0.5;
+    }
+    
+    .project-hero-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .project-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .project-image-container {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        margin-bottom: 3rem;
+    }
+    
+    .project-image-container img {
+        width: 100%;
+        height: auto;
+        display: block;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    
+    .project-image-container img:hover {
+        transform: scale(1.02);
+    }
+    
+    /* Tabs Styling */
+    .nav-tabs {
+        border-bottom: 3px solid #e9ecef;
+        margin-bottom: 2rem;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: #6c757d;
+        font-weight: 600;
+        padding: 1rem 2rem;
+        transition: all 0.3s ease;
+        margin-bottom: -3px;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        border-color: #dee2e6;
+        color: #667eea;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #667eea;
+        background: transparent;
+        border-color: #667eea;
+    }
+    
+    .tab-content {
+        min-height: 300px;
+    }
+    
+    .tab-pane {
+        padding: 1.5rem 0;
+    }
+    
+    /* Tech Stack Display */
+    .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+    
+    .tech-item {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tech-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Features Display */
+    .features-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .features-list li {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+        border-left: 4px solid #667eea;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .features-list li:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .features-list li::before {
+        content: '\f633';
+        font-family: 'bootstrap-icons';
+        color: #667eea;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+    
+    /* Image Sidebar */
+    .image-sidebar {
+        position: sticky;
+        top: 100px;
+        background: #f8f9fa;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+    }
+    
+    .image-sidebar h4 {
+        color: #212529;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #667eea;
+    }
+    
+    .sidebar-image-grid {
+        display: grid;
+        gap: 1rem;
+    }
+    
+    .sidebar-image-item {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background: white;
+    }
+    
+    .sidebar-image-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .sidebar-image-item img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+    }
+    
+    .sidebar-image-caption {
+        padding: 0.75rem;
+        background: white;
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-align: center;
+    }
+    
+    /* Modal Styling */
+    .image-modal .modal-dialog {
+        max-width: 90vw;
+        max-height: 90vh;
+    }
+    
+    .image-modal .modal-content {
+        background: transparent;
+        border: none;
+    }
+    
+    .image-modal .modal-body {
+        padding: 0;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 70vh;
+    }
+    
+    .image-modal .modal-body img {
+        max-width: 100%;
+        max-height: 90vh;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    .image-modal .modal-header {
+        border: none;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+    }
+    
+    .image-modal .modal-header .btn-close {
+        filter: invert(1);
+        opacity: 0.8;
+    }
+    
+    .image-modal .modal-header .btn-close:hover {
+        opacity: 1;
+    }
+    
+    .image-modal .modal-footer {
+        border: none;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 10;
+    }
+    
+    .image-modal-caption {
+        color: white;
+        font-size: 1.1rem;
+    }
+    
+    /* Problem/Solution/Result Cards */
+    .psr-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        border-top: 4px solid;
+    }
+    
+    .psr-card.problem {
+        border-top-color: #dc3545;
+    }
+    
+    .psr-card.solution {
+        border-top-color: #0d6efd;
+    }
+    
+    .psr-card.result {
+        border-top-color: #198754;
+    }
+    
+    .psr-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .psr-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin: 2rem 0;
+    }
+    
+    .btn-action {
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Markdown Content Styling */
+    .markdown-content {
+        line-height: 1.8;
+        color: #333;
+    }
+    
+    .markdown-content h1,
+    .markdown-content h2,
+    .markdown-content h3,
+    .markdown-content h4 {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        color: #212529;
+    }
+    
+    .markdown-content h2 {
+        font-size: 2rem;
+        border-bottom: 3px solid #667eea;
+        padding-bottom: 0.5rem;
+    }
+    
+    .markdown-content h3 {
+        font-size: 1.5rem;
+        color: #667eea;
+    }
+    
+    .markdown-content p {
+        margin-bottom: 1.5rem;
+    }
+    
+    .markdown-content ul,
+    .markdown-content ol {
+        margin-bottom: 1.5rem;
+        padding-left: 2rem;
+    }
+    
+    .markdown-content li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .markdown-content code {
+        background: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+        color: #e83e8c;
+    }
+    
+    .markdown-content pre {
+        background: #2d2d2d;
+        color: #f8f8f2;
+        padding: 1.5rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+    }
+    
+    .markdown-content pre code {
+        background: transparent;
+        color: inherit;
+        padding: 0;
+    }
+    
+    .markdown-content blockquote {
+        border-left: 4px solid #667eea;
+        padding-left: 1.5rem;
+        margin: 1.5rem 0;
+        color: #6c757d;
+        font-style: italic;
+    }
+    
+    .markdown-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+    }
+    
+    .markdown-content table th,
+    .markdown-content table td {
+        padding: 0.75rem;
+        border: 1px solid #dee2e6;
+    }
+    
+    .markdown-content table th {
+        background: #667eea;
+        color: white;
+        font-weight: 600;
+    }
+    
+    .markdown-content table tr:nth-child(even) {
+        background: #f8f9fa;
+    }
+    
+    .markdown-content a {
+        color: #667eea;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.3s ease;
+    }
+    
+    .markdown-content a:hover {
+        border-bottom-color: #667eea;
+    }
+    
+    .markdown-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 1.5rem 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Related Projects */
+    .related-projects {
+        background: #f8f9fa;
+        padding: 3rem 0;
+        margin-top: 4rem;
+        border-radius: 20px;
+    }
+    
+    .related-project-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    
+    .related-project-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+        .image-sidebar {
+            position: relative;
+            top: 0;
+            margin-top: 2rem;
+            max-height: none;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .project-hero {
+            padding: 2rem 0 1.5rem;
+        }
+        
+        .tech-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .nav-tabs .nav-link {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="project-hero">
+    <div class="container">
+        <div class="project-hero-content">
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb" style="background: rgba(255,255,255,0.8); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid rgba(102,126,234,0.1);">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-dark">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'projects_list' %}" class="text-dark">Projects</a></li>
+                    <li class="breadcrumb-item active text-dark">{{ project.title }}</li>
+                </ol>
+            </nav>
+            
+            <div class="project-meta">
+                {% if project.category %}
+                <span class="badge bg-light text-dark px-3 py-2" style="font-size: 1rem; border: 1px solid rgba(102,126,234,0.2);">
+                    <i class="bi bi-folder me-2"></i>{{ project.category.name }}
+                </span>
+                {% endif %}
+                <span class="text-muted">
+                    <i class="bi bi-calendar3 me-2"></i>{{ project.created_at|date:"F Y" }}
+                </span>
+            </div>
+            
+            <h1 class="display-5 fw-bold mb-3">{{ project.title }}</h1>
+            <p class="lead mb-0" style="opacity: 0.95; font-size: 1.1rem;">{{ project.description }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container my-5">
+    <div class="row">
+        <!-- Left Column: Main Content -->
+        <div class="col-lg-8">
+            <!-- Action Buttons -->
+            <div class="action-buttons mb-4">
+                {% if project.live_demo_url %}
+                <a href="{{ project.live_demo_url }}" class="btn btn-primary btn-action" target="_blank">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    View Live Demo
+                </a>
+                {% endif %}
+                {% if project.github_url %}
+                <a href="{{ project.github_url }}" class="btn btn-outline-primary btn-action" target="_blank">
+                    <i class="bi bi-github"></i>
+                    View on GitHub
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Tabs Section -->
+            <ul class="nav nav-tabs" id="projectTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                        <i class="bi bi-info-circle me-2"></i>Overview
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="content-tab" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab">
+                        <i class="bi bi-file-text me-2"></i>Details
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="features-tab" data-bs-toggle="tab" data-bs-target="#features" type="button" role="tab">
+                        <i class="bi bi-star me-2"></i>Features
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="projectTabContent">
+                <!-- Overview Tab: Tech Used + Problem/Solution/Result -->
+                <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                    <!-- Tech Used Section -->
+                    <div class="mb-5">
+                        <h3 class="mb-4">
+                            <i class="bi bi-tools me-2 text-primary"></i>Technologies & Tools
+                        </h3>
+                        {% if project.get_tech_list %}
+                        <div class="tech-grid">
+                            {% for tech in project.get_tech_list %}
+                            <div class="tech-item">
+                                <i class="bi bi-code-slash me-2"></i>{{ tech }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="empty-state">
+                            <i class="bi bi-tools"></i>
+                            <p>No technologies specified for this project.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Problem, Solution, Result Cards -->
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="psr-card problem">
+                                <div class="psr-icon text-danger">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                </div>
+                                <h4 class="fw-bold mb-3">The Problem</h4>
+                                <p class="text-muted">{{ project.problem }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="psr-card solution">
+                                <div class="psr-icon text-primary">
+                                    <i class="bi bi-lightbulb-fill"></i>
+                                </div>
+                                <h4 class="fw-bold mb-3">The Solution</h4>
+                                <p class="text-muted">{{ project.solution }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="psr-card result">
+                                <div class="psr-icon text-success">
+                                    <i class="bi bi-graph-up-arrow"></i>
+                                </div>
+                                <h4 class="fw-bold mb-3">The Result</h4>
+                                <p class="text-muted">{{ project.result }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Content Tab: Markdown Content -->
+                <div class="tab-pane fade" id="content" role="tabpanel">
+                    {% if markdown_html %}
+                    <div class="markdown-content">
+                        {{ markdown_html|safe }}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="bi bi-file-text"></i>
+                        <p>No additional content available for this project.</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Features Tab -->
+                <div class="tab-pane fade" id="features" role="tabpanel">
+                    <h3 class="mb-4">
+                        <i class="bi bi-star me-2 text-primary"></i>Key Features
+                    </h3>
+                    {% if project.get_features_list %}
+                    <ul class="features-list">
+                        {% for feature in project.get_features_list %}
+                        <li>{{ feature }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="bi bi-star"></i>
+                        <p>No features specified for this project.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Image Sidebar -->
+        <div class="col-lg-4">
+            {% if project.featured_image or project.images.all %}
+            <div class="image-sidebar">
+                <h4>
+                    <i class="bi bi-images me-2 text-primary"></i>Project Images
+                </h4>
+                <div class="sidebar-image-grid">
+                    {% if project.featured_image %}
+                    <div class="sidebar-image-item" 
+                         data-bs-toggle="modal"
+                         data-bs-target="#imageModal"
+                         onclick="openImageModal('{{ project.featured_image.url }}', '{{ project.title }}')">
+                        <img src="{{ project.featured_image.url }}" alt="{{ project.title }}" loading="lazy">
+                        <div class="sidebar-image-caption">Featured Image</div>
+                    </div>
+                    {% endif %}
+                    {% for image in project.images.all %}
+                    <div class="sidebar-image-item"
+                         data-bs-toggle="modal"
+                         data-bs-target="#imageModal"
+                         onclick="openImageModal('{{ image.image.url }}', '{{ image.caption|default:project.title }}')">
+                        <img src="{{ image.image.url }}" alt="{{ image.caption|default:project.title }}" loading="lazy">
+                        {% if image.caption %}
+                        <div class="sidebar-image-caption">{{ image.caption }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade image-modal" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Project Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="" class="img-fluid">
+            </div>
+            <div class="modal-footer">
+                <p class="image-modal-caption mb-0" id="modalCaption"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Projects -->
+{% if related_projects %}
+<div class="related-projects">
+    <div class="container">
+        <h2 class="fw-bold mb-4 text-center">
+            <i class="bi bi-collection me-2 text-primary"></i>Related Projects
+        </h2>
+        <div class="row g-4">
+            {% for related in related_projects %}
+            <div class="col-md-4">
+                <div class="related-project-card">
+                    {% if related.featured_image %}
+                    <img src="{{ related.featured_image.url }}" class="card-img-top" alt="{{ related.title }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-primary d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="bi bi-image text-white fs-1"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body p-3">
+                        <h5 class="card-title fw-bold mb-2">{{ related.title }}</h5>
+                        <p class="card-text text-muted small mb-3">{{ related.description|truncatewords:20 }}</p>
+                        <a href="{{ related.get_absolute_url }}" class="btn btn-sm btn-primary">
+                            View Project <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openImageModal(imageUrl, caption) {
+        document.getElementById('modalImage').src = imageUrl;
+        document.getElementById('modalImage').alt = caption;
+        document.getElementById('modalCaption').textContent = caption;
+    }
+    
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('imageModal'));
+            if (modal) {
+                modal.hide();
+            }
+        }
+    });
+</script>
+{% endblock %}
