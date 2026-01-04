@@ -16,13 +16,6 @@
 
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 80px; /* Offset for fixed header/nav */
-}
-
-@media (prefers-reduced-motion: reduce) {
-    html {
-        scroll-behavior: auto;
-    }
 }
 
 body {
