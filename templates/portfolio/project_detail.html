@@ -821,8 +821,6 @@
                 <div class="sidebar-image-grid">
                     {% if project.featured_image %}
                     <div class="sidebar-image-item" 
-                         data-bs-toggle="modal"
-                         data-bs-target="#imageModal"
                          onclick="openImageModal('{{ project.featured_image.url }}', '{{ project.title|escapejs }}', 0)">
                         <img src="{{ project.featured_image.url }}" alt="{{ project.title }}" loading="lazy">
                         <div class="sidebar-image-caption">Featured Image</div>
@@ -830,8 +828,6 @@
                     {% endif %}
                     {% for image in project.images.all %}
                     <div class="sidebar-image-item"
-                         data-bs-toggle="modal"
-                         data-bs-target="#imageModal"
                          onclick="openImageModal('{{ image.image.url }}', '{{ image.caption|default:project.title|escapejs }}', {% if project.featured_image %}{{ forloop.counter }}{% else %}{{ forloop.counter0 }}{% endif %})">
                         <img src="{{ image.image.url }}" alt="{{ image.caption|default:project.title }}" loading="lazy">
                         {% if image.caption %}
@@ -958,6 +954,13 @@
         
         updateModalImage();
         updateNavigationButtons();
+        
+        // Show the modal using Bootstrap API
+        const modalElement = document.getElementById('imageModal');
+        if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
     }
     
     function updateModalImage() {
