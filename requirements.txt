@@ -8,4 +8,5 @@ markdown==3.5.1
 psycopg2-binary==2.9.9
 dj-database-url==2.1.0
 gunicorn==21.2.0
+setuptools>=65.0.0
 
