@@ -222,6 +222,7 @@
         align-items: center;
         justify-content: center;
         min-height: 70vh;
+        position: relative;
     }
     
     .image-modal .modal-body img {
@@ -229,6 +230,66 @@
         max-height: 90vh;
         border-radius: 12px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    .image-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #667eea;
+        cursor: pointer;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .image-nav-btn:hover {
+        background: white;
+        transform: translateY(-50%) scale(1.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+    
+    .image-nav-btn:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+    
+    .image-nav-btn.prev {
+        left: 20px;
+    }
+    
+    .image-nav-btn.next {
+        right: 20px;
+    }
+    
+    .image-nav-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    
+    @media (max-width: 768px) {
+        .image-nav-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+        
+        .image-nav-btn.prev {
+            left: 10px;
+        }
+        
+        .image-nav-btn.next {
+            right: 10px;
+        }
     }
     
     .image-modal .modal-header {
@@ -265,6 +326,11 @@
     .image-modal-caption {
         color: white;
         font-size: 1.1rem;
+    }
+    
+    .image-counter {
+        font-size: 0.9rem;
+        margin-left: auto;
     }
     
     /* Problem/Solution/Result Cards */
@@ -672,7 +738,7 @@
                     <div class="sidebar-image-item" 
                          data-bs-toggle="modal"
                          data-bs-target="#imageModal"
-                         onclick="openImageModal('{{ project.featured_image.url }}', '{{ project.title }}')">
+                         onclick="openImageModal('{{ project.featured_image.url }}', '{{ project.title|escapejs }}', 0)">
                         <img src="{{ project.featured_image.url }}" alt="{{ project.title }}" loading="lazy">
                         <div class="sidebar-image-caption">Featured Image</div>
                     </div>
@@ -681,7 +747,7 @@
                     <div class="sidebar-image-item"
                          data-bs-toggle="modal"
                          data-bs-target="#imageModal"
-                         onclick="openImageModal('{{ image.image.url }}', '{{ image.caption|default:project.title }}')">
+                         onclick="openImageModal('{{ image.image.url }}', '{{ image.caption|default:project.title|escapejs }}', {% if project.featured_image %}{{ forloop.counter }}{% else %}{{ forloop.counter0 }}{% endif %})">
                         <img src="{{ image.image.url }}" alt="{{ image.caption|default:project.title }}" loading="lazy">
                         {% if image.caption %}
                         <div class="sidebar-image-caption">{{ image.caption }}</div>
@@ -704,14 +770,45 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <button class="image-nav-btn prev" id="prevImageBtn" onclick="navigateImage(-1)" aria-label="Previous Image">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
                 <img id="modalImage" src="" alt="" class="img-fluid">
+                <button class="image-nav-btn next" id="nextImageBtn" onclick="navigateImage(1)" aria-label="Next Image">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
             </div>
             <div class="modal-footer">
                 <p class="image-modal-caption mb-0" id="modalCaption"></p>
+                <span class="image-counter text-white-50 ms-auto" id="imageCounter"></span>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Hidden data for image navigation -->
+{% if project.featured_image or project.images.all %}
+<div id="imageData" style="display: none;">
+    <script type="application/json" id="imageDataScript">
+    {
+        "images": [
+            {% if project.featured_image %}
+            {
+                "url": "{{ project.featured_image.url }}",
+                "caption": "{{ project.title|escapejs }}"
+            }{% if project.images.all %},{% endif %}
+            {% endif %}
+            {% for image in project.images.all %}
+            {
+                "url": "{{ image.image.url }}",
+                "caption": "{{ image.caption|default:project.title|escapejs }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ]
+    }
+    </script>
+</div>
+{% endif %}
 
 <!-- Related Projects -->
 {% if related_projects %}
@@ -749,19 +846,96 @@
 
 {% block extra_js %}
 <script>
-    function openImageModal(imageUrl, caption) {
-        document.getElementById('modalImage').src = imageUrl;
-        document.getElementById('modalImage').alt = caption;
-        document.getElementById('modalCaption').textContent = caption;
+    let currentImageIndex = 0;
+    let imageGallery = [];
+    
+    // Initialize image gallery from JSON data
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageDataScript = document.getElementById('imageDataScript');
+        if (imageDataScript) {
+            try {
+                const data = JSON.parse(imageDataScript.textContent);
+                imageGallery = data.images || [];
+            } catch (e) {
+                console.error('Error parsing image data:', e);
+            }
+        }
+    });
+    
+    function openImageModal(imageUrl, caption, index) {
+        if (index !== undefined) {
+            currentImageIndex = index;
+        } else {
+            // Find index by URL
+            currentImageIndex = imageGallery.findIndex(img => img.url === imageUrl);
+            if (currentImageIndex === -1) currentImageIndex = 0;
+        }
+        
+        updateModalImage();
+        updateNavigationButtons();
     }
     
-    // Close modal on Escape key
+    function updateModalImage() {
+        if (imageGallery.length === 0) return;
+        
+        const currentImage = imageGallery[currentImageIndex];
+        document.getElementById('modalImage').src = currentImage.url;
+        document.getElementById('modalImage').alt = currentImage.caption;
+        document.getElementById('modalCaption').textContent = currentImage.caption;
+        document.getElementById('imageCounter').textContent = `${currentImageIndex + 1} / ${imageGallery.length}`;
+    }
+    
+    function navigateImage(direction) {
+        if (imageGallery.length === 0) return;
+        
+        currentImageIndex += direction;
+        
+        // Loop around
+        if (currentImageIndex < 0) {
+            currentImageIndex = imageGallery.length - 1;
+        } else if (currentImageIndex >= imageGallery.length) {
+            currentImageIndex = 0;
+        }
+        
+        updateModalImage();
+        updateNavigationButtons();
+    }
+    
+    function updateNavigationButtons() {
+        const prevBtn = document.getElementById('prevImageBtn');
+        const nextBtn = document.getElementById('nextImageBtn');
+        
+        if (imageGallery.length <= 1) {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+        } else {
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+        }
+    }
+    
+    // Keyboard navigation
     document.addEventListener('keydown', function(event) {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('imageModal'));
+        if (!modal || !modal._isShown) return;
+        
         if (event.key === 'Escape') {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('imageModal'));
-            if (modal) {
-                modal.hide();
-            }
+            modal.hide();
+        } else if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            navigateImage(-1);
+        } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            navigateImage(1);
+        }
+    });
+    
+    // Update navigation buttons when modal is shown
+    document.getElementById('imageModal').addEventListener('shown.bs.modal', function() {
+        updateNavigationButtons();
+        // Update counter
+        if (imageGallery.length > 0) {
+            document.getElementById('imageCounter').textContent = `${currentImageIndex + 1} / ${imageGallery.length}`;
         }
     });
 </script>
